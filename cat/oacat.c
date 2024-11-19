@@ -49,12 +49,19 @@ void copy_input_to_output(FILE *p_input_file, FILE *p_output_file) {
     putc(character, p_output_file);
   }
 }
+
 int main(int argc, char **argv) {
-  char **files = malloc(argc * sizeof(char *));
 
   if (argc == 1) {
     copy_input_to_output(stdin, stdout);
     exit(0);
+  }
+
+  char **files = malloc(argc * sizeof(char *));
+
+  if (!files) {
+    perror("Memory allocation failed");
+    exit(1);
   }
 
   while (--argc > 0) {
@@ -72,17 +79,18 @@ int main(int argc, char **argv) {
   printf("%d, %d, %d, %d\n", options.squeeze_non_empty_lines,
          options.number_non_empty_lines, options.number_all_lines,
          options.ends_of_lines);
+  char **p_files = files;
 
-  while (*files) {
-    int filename_is_minus = **files == '-' && (*++(*files) == '\0');
+  while (*p_files) {
+    int filename_is_minus = **p_files == '-' && (*++(*p_files) == '\0');
 
     if (filename_is_minus)
       copy_input_to_output(stdin, stdout);
     else {
-      p_input_file = fopen(*files, "r");
+      p_input_file = fopen(*p_files, "r");
 
       if (!p_input_file) {
-        printf("Error: can\'t open the specified file: %s\n", *files);
+        printf("Error: can\'t open the specified file: %s\n", *p_files);
         exit(1);
       }
 
@@ -90,9 +98,10 @@ int main(int argc, char **argv) {
       fclose(p_input_file);
     }
 
-    files++;
+    p_files++;
   }
 
-  free(*files);
+  free(files);
+  p_files = NULL;
   exit(0);
 }
