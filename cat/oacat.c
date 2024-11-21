@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#define MAX_LENGTH_OF_LINE 1024
+#define MAX_AMOUNT_OF_LINES 10000
 
 struct options {
   int number_all_lines;
@@ -44,41 +48,54 @@ void add_filename_to_file_list(char **files, char **argv,
 
   (*position_in_arguments)++;
 };
+
 void copy_input_to_output(FILE *p_input_file, FILE *p_output_file,
-                          struct options *options, int *line_number) {
-  while ((character = getc(p_input_file)) != EOF) {
-    if (options->ends_of_lines) {
-      if (character == '\n') {
-        putc('$', p_output_file);
-      }
+                          struct options *options,
+                          char **array_of_line_pointers, int *line_number) {
+  unsigned long max_value_64 = 18446744073709551615UL;
+
+  int line_length;
+  while ((line_length = getline(array_of_line_pointers, &max_value_64,
+                                p_input_file)) > 0) {
+    if (line_length >= MAX_LENGTH_OF_LINE) {
+      perror("Line longer than allowed");
+      return;
     }
-    if (options->number_all_lines && *line_number == 1) {
+
+    if (options->number_all_lines)
       fprintf(p_output_file, "\t%d ", *line_number);
-      (*line_number)++;
+
+    if (options->ends_of_lines) {
+      (*array_of_line_pointers)[line_length - 1] = '$';
+      (*array_of_line_pointers)[line_length] = '\n';
     }
-    putc(character, p_output_file);
-    if (options->number_all_lines && character == '\n') {
-      if ((character = getc(p_input_file))) {
-        fprintf(p_output_file, "\t%d ", *line_number);
-        ungetc(character, p_input_file);
-        (*line_number)++;
-      }
-    }
+
+    fprintf(p_output_file, "%s", *array_of_line_pointers);
+    array_of_line_pointers++;
+    (*line_number)++;
   }
 }
 
 int main(int argc, char **argv) {
   int line_number = 1;
 
+  char **array_of_line_pointers =
+      malloc(MAX_AMOUNT_OF_LINES / 2 * sizeof(char *));
+  if (!array_of_line_pointers) {
+    printf("Memory allocation failed for array_of_line_pointers");
+    exit(1);
+  }
+
   if (argc == 1) {
-    copy_input_to_output(stdin, stdout, &options, &line_number);
+    copy_input_to_output(stdin, stdout, &options, array_of_line_pointers,
+                         &line_number);
     exit(0);
   }
 
   char **files = malloc(argc * sizeof(char *));
 
   if (!files) {
-    perror("Memory allocation failed");
+    perror("Memory allocation failed for files");
     exit(1);
   }
 
@@ -103,7 +120,8 @@ int main(int argc, char **argv) {
     int filename_is_minus = **p_files == '-' && (*++(*p_files) == '\0');
 
     if (filename_is_minus)
-      copy_input_to_output(stdin, stdout, &options, &line_number);
+      copy_input_to_output(stdin, stdout, &options, array_of_line_pointers,
+                           &line_number);
     else {
       p_input_file = fopen(*p_files, "r");
 
@@ -112,7 +130,8 @@ int main(int argc, char **argv) {
         exit(1);
       }
 
-      copy_input_to_output(p_input_file, stdout, &options, &line_number);
+      copy_input_to_output(p_input_file, stdout, &options,
+                           array_of_line_pointers, &line_number);
       fclose(p_input_file);
     }
 
