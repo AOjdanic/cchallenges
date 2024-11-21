@@ -48,8 +48,7 @@ void add_filename_to_file_list(char **files, char **argv) {
   position_in_arguments++;
 };
 
-void copy_input_to_output(FILE *p_input_file, FILE *p_output_file,
-                          struct options *options,
+void copy_input_to_output(FILE *p_input_file, struct options *options,
                           char **array_of_line_pointers) {
   unsigned long max_value_64 = 18446744073709551615UL;
   static int line_number = 1;
@@ -63,7 +62,7 @@ void copy_input_to_output(FILE *p_input_file, FILE *p_output_file,
     }
 
     if (options->number_all_lines)
-      fprintf(p_output_file, "\t%d ", line_number);
+      fprintf(stdout, "\t%d ", line_number);
 
     if (options->ends_of_lines) {
       (*array_of_line_pointers)[line_length - 1] = '$';
@@ -71,7 +70,7 @@ void copy_input_to_output(FILE *p_input_file, FILE *p_output_file,
       (*array_of_line_pointers)[line_length + 1] = '\0';
     }
 
-    fprintf(p_output_file, "%s", *array_of_line_pointers);
+    fprintf(stdout, "%s", *array_of_line_pointers);
     array_of_line_pointers++;
     line_number++;
   }
@@ -85,7 +84,7 @@ int main(int argc, char **argv) {
   }
 
   if (argc == 1) {
-    copy_input_to_output(stdin, stdout, &options, array_of_line_pointers);
+    copy_input_to_output(stdin, &options, array_of_line_pointers);
     exit(0);
   }
 
@@ -117,7 +116,7 @@ int main(int argc, char **argv) {
     int filename_is_minus = **p_files == '-' && (*++(*p_files) == '\0');
 
     if (filename_is_minus)
-      copy_input_to_output(stdin, stdout, &options, array_of_line_pointers);
+      copy_input_to_output(stdin, &options, array_of_line_pointers);
     else {
       p_input_file = fopen(*p_files, "r");
 
@@ -126,8 +125,7 @@ int main(int argc, char **argv) {
         exit(1);
       }
 
-      copy_input_to_output(p_input_file, stdout, &options,
-                           array_of_line_pointers);
+      copy_input_to_output(p_input_file, &options, array_of_line_pointers);
       fclose(p_input_file);
     }
 
