@@ -15,7 +15,6 @@ struct options {
 FILE *p_input_file;
 int character;
 int number_of_lines = 1;
-int position_in_arguments = 0;
 struct options options = {0, 0, 0, 0};
 
 void set_program_options(char **argv, struct options *options) {
@@ -42,17 +41,18 @@ void set_program_options(char **argv, struct options *options) {
   }
 }
 
-void add_filename_to_file_list(char **files, char **argv,
-                               int *position_in_arguments) {
-  files[*position_in_arguments] = *argv;
+void add_filename_to_file_list(char **files, char **argv) {
+  static int position_in_arguments = 0;
 
-  (*position_in_arguments)++;
+  files[position_in_arguments] = *argv;
+  position_in_arguments++;
 };
 
 void copy_input_to_output(FILE *p_input_file, FILE *p_output_file,
                           struct options *options,
-                          char **array_of_line_pointers, int *line_number) {
+                          char **array_of_line_pointers) {
   unsigned long max_value_64 = 18446744073709551615UL;
+  static int line_number = 1;
 
   int line_length;
   while ((line_length = getline(array_of_line_pointers, &max_value_64,
@@ -63,32 +63,29 @@ void copy_input_to_output(FILE *p_input_file, FILE *p_output_file,
     }
 
     if (options->number_all_lines)
-      fprintf(p_output_file, "\t%d ", *line_number);
+      fprintf(p_output_file, "\t%d ", line_number);
 
     if (options->ends_of_lines) {
       (*array_of_line_pointers)[line_length - 1] = '$';
       (*array_of_line_pointers)[line_length] = '\n';
+      (*array_of_line_pointers)[line_length + 1] = '\0';
     }
 
     fprintf(p_output_file, "%s", *array_of_line_pointers);
     array_of_line_pointers++;
-    (*line_number)++;
+    line_number++;
   }
 }
 
 int main(int argc, char **argv) {
-  int line_number = 1;
-
-  char **array_of_line_pointers =
-      malloc(MAX_AMOUNT_OF_LINES / 2 * sizeof(char *));
+  char **array_of_line_pointers = malloc(MAX_AMOUNT_OF_LINES * sizeof(char *));
   if (!array_of_line_pointers) {
     printf("Memory allocation failed for array_of_line_pointers");
     exit(1);
   }
 
   if (argc == 1) {
-    copy_input_to_output(stdin, stdout, &options, array_of_line_pointers,
-                         &line_number);
+    copy_input_to_output(stdin, stdout, &options, array_of_line_pointers);
     exit(0);
   }
 
@@ -108,7 +105,7 @@ int main(int argc, char **argv) {
     if (is_an_option_argument)
       set_program_options(argv, &options);
     else
-      add_filename_to_file_list(files, argv, &position_in_arguments);
+      add_filename_to_file_list(files, argv);
   }
 
   printf("%d, %d, %d, %d\n", options.squeeze_non_empty_lines,
@@ -120,8 +117,7 @@ int main(int argc, char **argv) {
     int filename_is_minus = **p_files == '-' && (*++(*p_files) == '\0');
 
     if (filename_is_minus)
-      copy_input_to_output(stdin, stdout, &options, array_of_line_pointers,
-                           &line_number);
+      copy_input_to_output(stdin, stdout, &options, array_of_line_pointers);
     else {
       p_input_file = fopen(*p_files, "r");
 
@@ -131,7 +127,7 @@ int main(int argc, char **argv) {
       }
 
       copy_input_to_output(p_input_file, stdout, &options,
-                           array_of_line_pointers, &line_number);
+                           array_of_line_pointers);
       fclose(p_input_file);
     }
 
