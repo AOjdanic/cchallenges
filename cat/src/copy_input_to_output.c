@@ -1,13 +1,16 @@
 #include "../include/cat.h"
 
-void copy_input_to_output(FILE *p_input_file, struct options *options,
-                          char **array_of_line_pointers) {
+void copy_input_to_output(
+  FILE *p_input_file,
+  struct options *options,
+  char **array_of_line_pointers) {
+
   unsigned long max_value_64 = 18446744073709551615UL;
   static int line_number = 1;
 
   int line_length;
-  while ((line_length = getline(array_of_line_pointers, &max_value_64,
-                                p_input_file)) > 0) {
+  while ((line_length =
+            getline(array_of_line_pointers, &max_value_64, p_input_file)) > 0) {
     if (line_length >= MAX_LENGTH_OF_LINE) {
       perror("Line longer than allowed");
       return;

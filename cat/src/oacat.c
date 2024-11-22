@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     ++argv;
     char *address_of_current_character = *argv;
     int is_an_option_argument =
-        **argv == '-' && ((*++(address_of_current_character)) != '\0');
+      **argv == '-' && ((*++(address_of_current_character)) != '\0');
 
     if (is_an_option_argument)
       set_program_options(argv, &options);

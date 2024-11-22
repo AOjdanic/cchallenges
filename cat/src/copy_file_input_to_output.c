@@ -3,8 +3,10 @@
 
 FILE *p_input_file;
 
-void copy_file_input_to_output(char **p_files, struct options options,
-                               char **array_of_line_pointers) {
+void copy_file_input_to_output(
+  char **p_files,
+  struct options options,
+  char **array_of_line_pointers) {
   p_input_file = fopen(*p_files, "r");
 
   if (!p_input_file) {

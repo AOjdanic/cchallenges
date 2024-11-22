@@ -12,10 +12,14 @@ struct options {
 
 void add_filename_to_file_list(char **files, char **argv);
 
-void copy_input_to_output(FILE *p_input_file, struct options *options,
-                          char **array_of_line_pointers);
+void copy_input_to_output(
+  FILE *p_input_file,
+  struct options *options,
+  char **array_of_line_pointers);
 
 void set_program_options(char **argv, struct options *options);
 
-void copy_file_input_to_output(char **p_files, struct options options,
-                               char **array_of_line_pointers);
+void copy_file_input_to_output(
+  char **p_files,
+  struct options options,
+  char **array_of_line_pointers);
