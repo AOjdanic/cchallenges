@@ -1,4 +1,4 @@
-#include "cat.h"
+#include "../include/cat.h"
 
 void set_program_options(char **argv, struct options *options) {
   while (*++(*argv)) {

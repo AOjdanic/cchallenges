@@ -1,4 +1,4 @@
-#include "cat.h"
+#include "../include/cat.h"
 #include <stdlib.h>
 
 FILE *p_input_file;

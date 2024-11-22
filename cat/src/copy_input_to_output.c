@@ -1,4 +1,4 @@
-#include "cat.h"
+#include "../include/cat.h"
 
 void copy_input_to_output(FILE *p_input_file, struct options *options,
                           char **array_of_line_pointers) {
