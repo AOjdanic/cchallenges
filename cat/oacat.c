@@ -1,80 +1,11 @@
-#include <stdio.h>
+#include "cat.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LENGTH_OF_LINE 1024
-#define MAX_AMOUNT_OF_LINES 10000
-
-struct options {
-  int number_all_lines;
-  int ends_of_lines;
-  int squeeze_non_empty_lines;
-  int number_non_empty_lines;
-};
-
-FILE *p_input_file;
 int character;
 int number_of_lines = 1;
 struct options options = {0, 0, 0, 0};
-
-void set_program_options(char **argv, struct options *options) {
-  while (*++(*argv)) {
-    char current_character = **argv;
-    printf("current character: %c\n", current_character);
-    if (current_character == 'b') {
-      // b overrides n
-      options->number_non_empty_lines = 1;
-      options->number_all_lines = 0;
-    }
-
-    if (current_character == 'e')
-      options->ends_of_lines = 1;
-
-    if (current_character == 'n' && options->number_non_empty_lines == 0)
-      options->number_all_lines = 1;
-
-    if (current_character == 'h')
-      printf("CURRENT CHARACTER IS h\n");
-
-    if (current_character == 's')
-      options->squeeze_non_empty_lines = 1;
-  }
-}
-
-void add_filename_to_file_list(char **files, char **argv) {
-  static int position_in_arguments = 0;
-
-  files[position_in_arguments] = *argv;
-  position_in_arguments++;
-};
-
-void copy_input_to_output(FILE *p_input_file, struct options *options,
-                          char **array_of_line_pointers) {
-  unsigned long max_value_64 = 18446744073709551615UL;
-  static int line_number = 1;
-
-  int line_length;
-  while ((line_length = getline(array_of_line_pointers, &max_value_64,
-                                p_input_file)) > 0) {
-    if (line_length >= MAX_LENGTH_OF_LINE) {
-      perror("Line longer than allowed");
-      return;
-    }
-
-    if (options->number_all_lines)
-      fprintf(stdout, "\t%d ", line_number);
-
-    if (options->ends_of_lines) {
-      (*array_of_line_pointers)[line_length - 1] = '$';
-      (*array_of_line_pointers)[line_length] = '\n';
-      (*array_of_line_pointers)[line_length + 1] = '\0';
-    }
-
-    fprintf(stdout, "%s", *array_of_line_pointers);
-    array_of_line_pointers++;
-    line_number++;
-  }
-}
 
 int main(int argc, char **argv) {
   char **array_of_line_pointers = malloc(MAX_AMOUNT_OF_LINES * sizeof(char *));
@@ -107,9 +38,6 @@ int main(int argc, char **argv) {
       add_filename_to_file_list(files, argv);
   }
 
-  printf("%d, %d, %d, %d\n", options.squeeze_non_empty_lines,
-         options.number_non_empty_lines, options.number_all_lines,
-         options.ends_of_lines);
   char **p_files = files;
 
   while (*p_files) {
@@ -118,17 +46,8 @@ int main(int argc, char **argv) {
     if (filename_is_minus)
       copy_input_to_output(stdin, &options, array_of_line_pointers);
     else {
-      p_input_file = fopen(*p_files, "r");
-
-      if (!p_input_file) {
-        printf("Error: can\'t open the specified file: %s\n", *p_files);
-        exit(1);
-      }
-
-      copy_input_to_output(p_input_file, &options, array_of_line_pointers);
-      fclose(p_input_file);
+      copy_file_input_to_output(p_files, options, array_of_line_pointers);
     }
-
     p_files++;
   }
 
