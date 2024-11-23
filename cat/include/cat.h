@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 
 #define MAX_LENGTH_OF_LINE 1024
@@ -23,3 +24,5 @@ void copy_file_input_to_output(
   char **p_files,
   struct options options,
   char **array_of_line_pointers);
+
+bool is_empty_line(char **line);
