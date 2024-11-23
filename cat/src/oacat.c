@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   while (--argc > 0) {
     ++argv;
     char *address_of_current_character = *argv;
-    int is_an_option_argument =
+    bool is_an_option_argument =
       **argv == '-' && ((*++(address_of_current_character)) != '\0');
 
     if (is_an_option_argument)
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
   char **p_files = files;
 
   while (*p_files) {
-    int filename_is_minus = **p_files == '-' && (*++(*p_files) == '\0');
+    bool filename_is_minus = **p_files == '-' && (*++(*p_files) == '\0');
 
     if (filename_is_minus)
       copy_input_to_output(stdin, &options, array_of_line_pointers);
