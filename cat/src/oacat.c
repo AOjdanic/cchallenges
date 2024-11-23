@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-int character;
-int number_of_lines = 1;
 struct options options = {0, 0, 0, 0};
 
 int main(int argc, char **argv) {
