@@ -3,10 +3,7 @@
 
 FILE *p_input_file;
 
-void copy_file_input_to_output(
-  char **p_files,
-  struct options options,
-  char **array_of_line_pointers) {
+void pipe_file_io(char **p_files, struct options *options, char **input_lines) {
   p_input_file = fopen(*p_files, "r");
 
   if (!p_input_file) {
@@ -14,6 +11,6 @@ void copy_file_input_to_output(
     exit(1);
   }
 
-  copy_input_to_output(p_input_file, &options, array_of_line_pointers);
+  pipe_io(p_input_file, options, input_lines);
   fclose(p_input_file);
 }

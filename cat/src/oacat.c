@@ -5,14 +5,14 @@
 struct options options = {0, 0, 0, 0};
 
 int main(int argc, char **argv) {
-  char **array_of_line_pointers = malloc(MAX_AMOUNT_OF_LINES * sizeof(char *));
-  if (!array_of_line_pointers) {
-    printf("Memory allocation failed for array_of_line_pointers");
+  char **input_lines = malloc(MAX_LINES * sizeof(char *));
+  if (!input_lines) {
+    printf("Memory allocation failed for input_lines");
     exit(1);
   }
 
   if (argc == 1) {
-    copy_input_to_output(stdin, &options, array_of_line_pointers);
+    pipe_io(stdin, &options, input_lines);
     exit(0);
   }
 
@@ -25,25 +25,24 @@ int main(int argc, char **argv) {
 
   while (--argc > 0) {
     ++argv;
-    char *address_of_current_character = *argv;
-    bool is_an_option_argument =
-      **argv == '-' && ((*++(address_of_current_character)) != '\0');
+    char *current_char = *argv;
+    bool is_option = **argv == '-' && ((*++(current_char)) != '\0');
 
-    if (is_an_option_argument)
-      set_program_options(argv, &options);
+    if (is_option)
+      set_options(argv, &options);
     else
-      add_filename_to_file_list(files, argv);
+      add_file(files, argv);
   }
 
   char **p_files = files;
 
   while (*p_files) {
-    bool filename_is_minus = **p_files == '-' && (*++(*p_files) == '\0');
+    bool is_minus = **p_files == '-' && (*++(*p_files) == '\0');
 
-    if (filename_is_minus)
-      copy_input_to_output(stdin, &options, array_of_line_pointers);
+    if (is_minus)
+      pipe_io(stdin, &options, input_lines);
     else {
-      copy_file_input_to_output(p_files, options, array_of_line_pointers);
+      pipe_file_io(p_files, &options, input_lines);
     }
     p_files++;
   }

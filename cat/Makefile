@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Iinclude
-SRCS = src/oacat.c src/add_filename_to_file_list.c src/copy_file_input_to_output.c src/copy_input_to_output.c src/set_program_options.c src/is_empty_line.c
+SRCS = src/oacat.c src/add_file.c src/is_empty_line.c src/pipe_file_io.c src/pipe_io.c src/set_options.c
 OBJS = $(patsubst src/%.c, build/%.o, $(SRCS))
 TARGET = build/oacat
 
