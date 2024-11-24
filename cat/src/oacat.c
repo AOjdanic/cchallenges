@@ -36,6 +36,11 @@ int main(int argc, char **argv) {
 
   char **p_files = files;
 
+  if (!(*files)) {
+    pipe_io(stdin, &options, input_lines);
+    exit(0);
+  }
+
   while (*p_files) {
     bool is_minus = **p_files == '-' && (*++(*p_files) == '\0');
 
@@ -48,6 +53,7 @@ int main(int argc, char **argv) {
   }
 
   free(files);
+  free(input_lines);
   p_files = NULL;
   exit(0);
 }
