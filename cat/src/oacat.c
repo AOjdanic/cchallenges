@@ -4,6 +4,18 @@
 
 struct options options = {0, 0, 0, 0};
 
+void free_allocations(char **input_lines, char **files, int argc) {
+  for (int i = 0; i < argc; i++) {
+    free(files[i]);
+  }
+  free(files);
+
+  for (int i = 0; i < MAX_LINES; i++) {
+    free(input_lines[i]);
+  }
+  free(input_lines);
+}
+
 int main(int argc, char **argv) {
   char **input_lines = malloc(MAX_LINES * sizeof(char *));
   if (!input_lines) {
@@ -52,8 +64,7 @@ int main(int argc, char **argv) {
     p_files++;
   }
 
-  free(files);
-  free(input_lines);
+  free_allocations(input_lines, files, argc);
   p_files = NULL;
   exit(0);
 }
