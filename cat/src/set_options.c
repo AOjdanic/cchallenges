@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void set_options(char **argv, struct options *options) {
-  while (*++(*argv)) {
-    char current_character = **argv;
+void set_options(char argv[], struct options *options) {
+  for (int i = 0; argv[i] != false; i++) {
+    char current_character = argv[i];
 
     if (current_character == 'b') {
       options->enumerate_lines = 1;

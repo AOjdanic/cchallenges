@@ -1,8 +1,9 @@
 #include "../include/cat.h"
+#include <string.h>
 
-void add_file(char **files, char **argv) {
+void add_file(char file[MAX_FILENAME_LENGTH], char argv[]) {
   static int index = 0;
 
-  files[index] = *argv;
+  strcpy(file, argv);
   index++;
 };

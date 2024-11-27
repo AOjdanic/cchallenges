@@ -1,10 +1,7 @@
 #include "../include/cat.h"
 #include <stdio.h>
 
-bool is_empty_line(char **line);
-
 void pipe_io(FILE *p_input_file, struct options *options, char **input_lines) {
-
   unsigned long max_value_64 = 18446744073709551615UL;
   static int line_number = 1;
 

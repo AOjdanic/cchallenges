@@ -3,11 +3,11 @@
 
 FILE *p_input_file;
 
-void pipe_file_io(char **p_files, struct options *options, char **input_lines) {
-  p_input_file = fopen(*p_files, "r");
+void pipe_file_io(char file[], struct options *options, char **input_lines) {
+  p_input_file = fopen(file, "r");
 
   if (!p_input_file) {
-    printf("Error: can\'t open the specified file: %s\n", *p_files);
+    printf("Error: can\'t open the specified file: %s\n", file);
     exit(1);
   }
 

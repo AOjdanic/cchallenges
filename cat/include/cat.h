@@ -3,8 +3,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define MAX_LINES 10000
+#define MAX_LINES 1000
 #define MAX_LINE_LENGTH 1024
+#define MAX_FILENAME_LENGTH 64
 
 struct options {
   int mark_ends;
@@ -14,10 +15,10 @@ struct options {
 };
 
 bool is_empty_line(char **line);
-void add_file(char **files, char **argv);
-void set_options(char **argv, struct options *options);
+void add_file(char file[MAX_FILENAME_LENGTH], char argv[]);
+void set_options(char argv[], struct options *options);
 void pipe_io(FILE *p_input_file, struct options *options, char **input_lines);
-void pipe_file_io(char **p_files, struct options *options, char **input_lines);
+void pipe_file_io(char file[], struct options *options, char **input_lines);
 
 #define HELP                                                                   \
   "Usage: oacat [OPTION]... [FILE]... \n"                                      \
