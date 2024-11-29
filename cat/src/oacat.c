@@ -43,13 +43,17 @@ int main(int argc, char *argv[]) {
 
   char files[argc][MAX_FILENAME_LENGTH];
 
-  for (int i = 0; i < argc - 1; i++) {
-    bool is_option = argv[i + 1][0] == '-' && argv[i + 1][1] != '\0';
+  int file_index = 0;
+
+  for (int i = 1; i < argc; i++) {
+    bool is_option = argv[i][0] == '-' && argv[i][1] != '\0';
 
     if (is_option)
-      set_options(argv[i + 1], &options);
-    else
-      add_file(files[i], argv[i + 1]);
+      set_options(argv[i], &options);
+    else {
+      add_file(files[file_index], argv[i]);
+      file_index++;
+    }
   }
 
   if (!files[0]) {
