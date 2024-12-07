@@ -30,8 +30,6 @@ void pipe_io(FILE *p_input_file) {
     }
 
     fprintf(stdout, "%s", line);
-    if (is_empty_line(line))
-      printf("\n");
     line_number++;
   }
 
