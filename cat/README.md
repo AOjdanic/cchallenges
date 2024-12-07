@@ -3,7 +3,7 @@
 ## Here are program options, which are a subset of original cat:
 
 ```
-Usage: oacat [option]... [file]...
+Usage: ccat [option]... [file]...
 
 concatenate file(s) to standard output.
 with no file, or when file is -, read standard input.
@@ -15,6 +15,6 @@ with no file, or when file is -, read standard input.
 -h display this help and exit
 
 Examples:
- oacat file1 - file2 output file1's contents, then standard input, then file2's contents.
- oacat copy standard input to standard output.
+ ccat file1 - file2 output file1's contents, then standard input, then file2's contents.
+ ccat copy standard input to standard output.
 ```
