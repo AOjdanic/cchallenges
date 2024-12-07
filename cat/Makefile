@@ -1,6 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Iinclude -g
-# FLAGS=-g
+FLAGS = -Wall -Iinclude 
 SRCS = src/ccat.c src/is_empty_line.c src/pipe_file_io.c src/pipe_io.c 
 OBJS = $(patsubst src/%.c, build/%.o, $(SRCS))
 TARGET = build/ccat
@@ -13,7 +12,7 @@ $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET)
 
 build/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(FLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS)
