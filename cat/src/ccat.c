@@ -7,15 +7,9 @@
 struct Options options = {0};
 
 int main(int argc, char **argv) {
-  char **input_lines = malloc(MAX_LINES * sizeof(char *));
-  if (!input_lines) {
-    perror("malloc");
-    exit(-1);
-  }
-
   if (argc == 1) {
-    pipe_io(stdin, input_lines);
-    goto END;
+    pipe_io(stdin);
+    exit(0);
   }
 
   int flag;
@@ -37,7 +31,7 @@ int main(int argc, char **argv) {
         break;
       case 'h':
         printf(HELP);
-        goto END;
+        exit(0);
         break;
       case '?':
       default:
@@ -47,19 +41,18 @@ int main(int argc, char **argv) {
   }
 
   if (!argv[optind]) {
-    pipe_io(stdin, input_lines);
+    pipe_io(stdin);
   }
 
   while (argv[optind]) {
     if (strcmp(argv[optind], "-") == 0) {
-      pipe_io(stdin, input_lines);
+      pipe_io(stdin);
       optind++;
       continue;
     }
-    pipe_file_io(argv[optind], input_lines);
+    pipe_file_io(argv[optind]);
     optind++;
   }
 
-END:
   exit(0);
 }

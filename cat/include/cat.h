@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define MAX_LINES 100000
-
 struct Options {
   int mark_ends;
   int squeeze_lines;
@@ -12,9 +10,9 @@ struct Options {
   int enumerate_all_lines;
 };
 
-bool is_empty_line(char **line);
-void pipe_io(FILE *p_input_file, char **input_lines);
-void pipe_file_io(char *file, char **input_lines);
+bool is_empty_line(char *line);
+void pipe_io(FILE *p_input_file);
+void pipe_file_io(char *file);
 
 #define HELP                                                                   \
   "Usage: ccat [OPTION]... [FILE]... \n"                                       \
