@@ -1,46 +1,38 @@
 #include "../include/cat.h"
-#include <stdio.h>
+#include <stdlib.h>
 
-bool is_empty_line(char **line);
+extern struct Options options;
 
-void pipe_io(FILE *p_input_file, struct options *options, char **input_lines) {
-
-  unsigned long max_value_64 = 18446744073709551615UL;
+void pipe_io(FILE *p_input_file) {
   static int line_number = 1;
 
-  int line_length;
+  char *line = NULL;
+  ssize_t line_length;
+  size_t max_line_length = 0;
 
-  while ((line_length = getline(input_lines, &max_value_64, p_input_file)) >
-         0) {
-    if (line_length >= MAX_LINE_LENGTH) {
-      perror("Line longer than allowed");
-      return;
-    }
-
-    if (is_empty_line(input_lines) && options->squeeze_lines) {
-      input_lines++;
+  while ((line_length = getline(&line, &max_line_length, p_input_file)) > 0) {
+    if (is_empty_line(line) && options.squeeze_lines) {
       line_number++;
       continue;
     }
 
-    if (options->enumerate_lines == 1 && !is_empty_line(input_lines)) {
+    if (options.enumerate_lines && !is_empty_line(line)) {
       fprintf(stdout, "\t%d ", line_number);
-      line_number--;
     }
 
-    if (options->enumerate_all_lines)
+    if (options.enumerate_all_lines)
       fprintf(stdout, "\t%d ", line_number);
 
-    if (options->mark_ends) {
-      (*input_lines)[line_length - 1] = '$';
-      (*input_lines)[line_length] = '\n';
-      (*input_lines)[line_length + 1] = '\0';
+    if (options.mark_ends) {
+      (line)[line_length - 1] = '$';
+      (line)[line_length] = '\n';
+      (line)[line_length + 1] = '\0';
     }
 
-    fprintf(stdout, "%s", *input_lines);
-    if (is_empty_line(input_lines))
-      printf("\n");
-    input_lines++;
+    fprintf(stdout, "%s", line);
     line_number++;
   }
+
+  free(line);
+  line = NULL;
 }
