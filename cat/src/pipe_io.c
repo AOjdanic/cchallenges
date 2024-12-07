@@ -6,9 +6,9 @@ extern struct Options options;
 void pipe_io(FILE *p_input_file) {
   static int line_number = 1;
 
-  int line_length;
-  char *line = malloc(120 * sizeof(char));
-  unsigned long max_line_length = 0;
+  char *line = NULL;
+  ssize_t line_length;
+  size_t max_line_length = 0;
 
   while ((line_length = getline(&line, &max_line_length, p_input_file)) > 0) {
     if (is_empty_line(line) && options.squeeze_lines) {
