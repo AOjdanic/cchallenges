@@ -1,6 +1,6 @@
 #include "../include/cat.h"
 
-extern struct options options;
+extern struct Options options;
 
 void pipe_io(FILE *p_input_file, char **input_lines) {
   static int line_number = 1;

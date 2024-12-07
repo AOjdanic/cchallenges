@@ -5,7 +5,7 @@
 
 #define MAX_LINES 100000
 
-struct options {
+struct Options {
   int mark_ends;
   int squeeze_lines;
   int enumerate_lines;

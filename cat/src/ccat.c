@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct options options = {0};
+struct Options options = {0};
 
 int main(int argc, char **argv) {
   char **input_lines = malloc(MAX_LINES * sizeof(char *));
