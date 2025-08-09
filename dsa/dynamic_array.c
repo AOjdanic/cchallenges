@@ -145,3 +145,4 @@ int main() {
 
 // improvements
 // error handling
+// im not checking for null pointers in a few of these functions
