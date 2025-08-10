@@ -38,7 +38,7 @@ void DynamicArray_free(DynamicArray **arr) {
   DynamicArray *tmp = *arr;
 
   free(tmp->elements);
-  tmp->elements = NULL; // do this to avoid dangling pointer
+  tmp->elements = NULL;
 
   free(tmp);
   *arr = NULL;
@@ -52,8 +52,7 @@ DynamicArray *DynamicArray_push(DynamicArray *arr, int el) {
   if (arr->size == arr->capacity) {
     int *newP = realloc(arr->elements, arr->capacity * 2 * sizeof(int));
     if (newP == NULL) {
-      // improve this with some error
-      return arr;
+      return NULL;
     }
 
     arr->elements = newP;
@@ -67,20 +66,13 @@ DynamicArray *DynamicArray_push(DynamicArray *arr, int el) {
 }
 
 int DynamicArray_pop(DynamicArray *arr) {
-  // i originally wrote arr->elements, instead of size, which is wrong,
-  // because then im checking whether a pointer is null, and not whether
-  // the array is empty
-  if (arr->size == 0) {
-    // improve this with error
+  if (!arr || !arr->elements || !arr->size) {
     return 0;
   }
+
   int temp = arr->elements[arr->size - 1];
   arr->size--;
 
-  // here we can return the popped value, but we should not return a
-  // pointer to it, because if the array gets resized, or the value gets
-  // overwritten, we may get a dangling pointer, or a pointer that points to
-  // incorrect data
   return temp;
 }
 
@@ -145,4 +137,3 @@ int main() {
 
 // improvements
 // error handling
-// im not checking for null pointers in a few of these functions
