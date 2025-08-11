@@ -8,9 +8,9 @@ typedef struct dynamic_array {
   int capacity;
   void *elements;
   size_t elementSize;
-} DynamicArray;
+} DynArr;
 
-void DynamicArray_shrink(DynamicArray *arr) {
+void DynArr_shrink(DynArr *arr) {
   if (arr->size < arr->capacity / 4 && arr->capacity > 1) {
     int newCap = arr->capacity / 2;
     void *newP = realloc(arr->elements, newCap * arr->elementSize);
@@ -21,7 +21,7 @@ void DynamicArray_shrink(DynamicArray *arr) {
   }
 }
 
-DynamicArray *DynamicArray_initialize(size_t elementSize, int initialCapacity) {
+DynArr *DynArr_init(size_t elementSize, int initialCapacity) {
   if (elementSize == 0) {
     return NULL;
   }
@@ -33,7 +33,7 @@ DynamicArray *DynamicArray_initialize(size_t elementSize, int initialCapacity) {
     return NULL;
   }
 
-  DynamicArray *arr = malloc(sizeof(DynamicArray));
+  DynArr *arr = malloc(sizeof(DynArr));
 
   if (!arr) {
     free(p);
@@ -48,12 +48,12 @@ DynamicArray *DynamicArray_initialize(size_t elementSize, int initialCapacity) {
   return arr;
 }
 
-void DynamicArray_free(DynamicArray **arr) {
+void DynArr_free(DynArr **arr) {
   if (!arr || !*arr) {
     return;
   }
 
-  DynamicArray *tmp = *arr;
+  DynArr *tmp = *arr;
 
   free(tmp->elements);
   tmp->elements = NULL;
@@ -62,7 +62,7 @@ void DynamicArray_free(DynamicArray **arr) {
   *arr = NULL;
 }
 
-bool DynamicArray_push(DynamicArray *arr, void *el) {
+bool DynArr_push(DynArr *arr, void *el) {
   if (!arr || !arr->elements) {
     return false;
   }
@@ -84,7 +84,7 @@ bool DynamicArray_push(DynamicArray *arr, void *el) {
   return true;
 }
 
-bool DynamicArray_pop(DynamicArray *arr, void *out) {
+bool DynArr_pop(DynArr *arr, void *out) {
   if (!arr || !arr->elements || !arr->size) {
     return false;
   }
@@ -93,18 +93,18 @@ bool DynamicArray_pop(DynamicArray *arr, void *out) {
   memcpy(out, src, arr->elementSize);
   arr->size--;
 
-  DynamicArray_shrink(arr);
+  DynArr_shrink(arr);
 
   return true;
 }
 
-bool DynamicArray_remove(DynamicArray *arr, int index, void *out) {
+bool DynArr_remove(DynArr *arr, int index, void *out) {
   if (!arr || !arr->elements || index < 0 || index >= arr->size) {
     return false;
   }
 
   if (index == arr->size - 1) {
-    return DynamicArray_pop(arr, out);
+    return DynArr_pop(arr, out);
   }
 
   void *src = (char *)arr->elements + index * arr->elementSize;
@@ -117,12 +117,12 @@ bool DynamicArray_remove(DynamicArray *arr, int index, void *out) {
   }
 
   arr->size--;
-  DynamicArray_shrink(arr);
+  DynArr_shrink(arr);
 
   return true;
 }
 
-bool DynamicArray_get(DynamicArray *arr, int index, void *out) {
+bool DynArr_get(DynArr *arr, int index, void *out) {
   if (!arr || !arr->elements || index < 0 || index >= arr->size) {
     return false;
   }
@@ -133,7 +133,7 @@ bool DynamicArray_get(DynamicArray *arr, int index, void *out) {
   return true;
 }
 
-bool DynamicArray_set(DynamicArray *arr, int index, void *value) {
+bool DynArr_set(DynArr *arr, int index, void *value) {
   if (!arr || !arr->elements || index < 0 || index >= arr->size) {
     return false;
   }
@@ -145,13 +145,13 @@ bool DynamicArray_set(DynamicArray *arr, int index, void *value) {
 }
 
 int main() {
-  DynamicArray *arr = DynamicArray_initialize(sizeof(int), 0);
+  DynArr *arr = DynArr_init(sizeof(int), 0);
 
   if (arr) {
     for (int i = 0; i < 9; i++) {
-      DynamicArray_push(arr, &i);
+      DynArr_push(arr, &i);
       int value;
-      if (DynamicArray_get(arr, i, &value)) {
+      if (DynArr_get(arr, i, &value)) {
         printf("%d ", value);
       }
     }
@@ -160,25 +160,25 @@ int main() {
 
     int setter = 10;
 
-    DynamicArray_set(arr, 2, &setter);
+    DynArr_set(arr, 2, &setter);
     int poppedValue;
-    if (DynamicArray_pop(arr, &poppedValue)) {
+    if (DynArr_pop(arr, &poppedValue)) {
       printf("poppedValue: %d\n", poppedValue);
     }
 
     int removed;
-    if (DynamicArray_remove(arr, 5, &removed)) {
+    if (DynArr_remove(arr, 5, &removed)) {
       printf("removed: %d\n", removed);
     }
 
     for (int i = 0; i < arr->size; i++) {
       int value;
-      if (DynamicArray_get(arr, i, &value)) {
+      if (DynArr_get(arr, i, &value)) {
         printf("%d ", value);
       }
     }
 
-    DynamicArray_free(&arr);
+    DynArr_free(&arr);
 
     printf("\n");
   }
