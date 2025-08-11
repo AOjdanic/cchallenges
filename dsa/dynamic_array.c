@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +12,7 @@ typedef struct dynamic_array {
 DynamicArray *DynamicArray_initialize(int initialSize) {
   int size = initialSize ? initialSize : 1;
 
-  int *p = malloc(size * sizeof(int));
+  int *p = calloc(size, sizeof(int));
   if (p == NULL) {
     return NULL;
   }
@@ -44,9 +45,13 @@ void DynamicArray_free(DynamicArray **arr) {
   *arr = NULL;
 }
 
-DynamicArray *DynamicArray_push(DynamicArray *arr, int el) {
-  if (!arr || !arr->elements) {
-    return NULL;
+bool DynamicArray_push(DynamicArray *arr, int el) {
+  if (!arr || !arr->elements || arr->size > arr->capacity) {
+    return false;
+  }
+
+  if (arr->capacity == 0) {
+    arr->capacity = 1;
   }
 
   if (arr->size == arr->capacity) {
@@ -62,29 +67,30 @@ DynamicArray *DynamicArray_push(DynamicArray *arr, int el) {
   arr->elements[arr->size] = el;
   arr->size++;
 
-  return arr;
+  return true;
 }
 
-int DynamicArray_pop(DynamicArray *arr) {
+bool DynamicArray_pop(DynamicArray *arr, int *result) {
   if (!arr || !arr->elements || !arr->size) {
-    return 0;
+    return false;
   }
 
-  int temp = arr->elements[arr->size - 1];
+  *result = arr->elements[arr->size - 1];
   arr->size--;
 
-  return temp;
+  return true;
 }
 
-int DynamicArray_remove(DynamicArray *arr, int index) {
+bool DynamicArray_remove(DynamicArray *arr, int index, int *result) {
   if (!arr || !arr->elements || index < 0 || index >= arr->size) {
-    return 0;
+    return false;
   }
-  int removed = arr->elements[index];
 
   if (index == arr->size - 1) {
-    return DynamicArray_pop(arr);
+    return DynamicArray_pop(arr, result);
   }
+
+  *result = arr->elements[index];
 
   if (index < arr->size - 1) {
     memmove(&arr->elements[index], &arr->elements[index + 1],
@@ -93,23 +99,27 @@ int DynamicArray_remove(DynamicArray *arr, int index) {
 
   arr->size--;
 
-  return removed;
+  return true;
 }
 
-int *DynamicArray_get(DynamicArray *arr, int index) {
+bool DynamicArray_get(DynamicArray *arr, int index, int *result) {
   if (!arr || !arr->elements || index < 0 || index >= arr->size) {
-    return NULL;
+    return false;
   }
 
-  return &arr->elements[index];
+  *result = arr->elements[index];
+
+  return true;
 }
 
-void DynamicArray_set(DynamicArray *arr, int index, int value) {
+bool DynamicArray_set(DynamicArray *arr, int index, int value) {
   if (!arr || !arr->elements || index < 0 || index >= arr->size) {
-    return;
+    return false;
   }
 
   arr->elements[index] = value;
+
+  return true;
 }
 
 int main() {
@@ -117,23 +127,33 @@ int main() {
 
   for (int i = 0; i < 9; i++) {
     DynamicArray_push(arr, i);
-    printf("%d ", *DynamicArray_get(arr, i));
+    int value;
+    if (DynamicArray_get(arr, i, &value)) {
+      printf("%d ", value);
+    }
   }
 
   printf("\n");
 
   DynamicArray_set(arr, 2, 10);
-  DynamicArray_pop(arr);
-  DynamicArray_remove(arr, 5);
+  int poppedValue;
+  if (DynamicArray_pop(arr, &poppedValue)) {
+    printf("poppedValue: %d\n", poppedValue);
+  }
+
+  int removed;
+  if (DynamicArray_remove(arr, 5, &removed)) {
+    printf("removed: %d\n", removed);
+  }
 
   for (int i = 0; i < arr->size; i++) {
-    printf("%d ", *DynamicArray_get(arr, i));
+    int value;
+    if (DynamicArray_get(arr, i, &value)) {
+      printf("%d ", value);
+    }
   }
 
   DynamicArray_free(&arr);
 
   printf("\n");
 }
-
-// improvements
-// error handling
