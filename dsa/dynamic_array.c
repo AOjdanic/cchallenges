@@ -9,6 +9,17 @@ typedef struct dynamic_array {
   int *elements;
 } DynamicArray;
 
+void DynamicArray_shrink(DynamicArray *arr) {
+  if (arr->size < arr->capacity / 4 && arr->capacity > 1) {
+    int newCap = arr->capacity / 2;
+    int *newP = realloc(arr->elements, newCap * sizeof(int));
+    if (newP) {
+      arr->elements = newP;
+      arr->capacity = newCap;
+    }
+  }
+}
+
 DynamicArray *DynamicArray_initialize(int initialSize) {
   int size = initialSize ? initialSize : 1;
 
@@ -78,6 +89,8 @@ bool DynamicArray_pop(DynamicArray *arr, int *result) {
   *result = arr->elements[arr->size - 1];
   arr->size--;
 
+  DynamicArray_shrink(arr);
+
   return true;
 }
 
@@ -98,6 +111,7 @@ bool DynamicArray_remove(DynamicArray *arr, int index, int *result) {
   }
 
   arr->size--;
+  DynamicArray_shrink(arr);
 
   return true;
 }
